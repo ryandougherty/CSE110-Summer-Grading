@@ -36,7 +36,11 @@ public class ExtractHTML {
 				str = str.replace(" ", "\n");
 				stringToWrite += str + "\n";
 			}
-			String filename = stringToWrite.substring(0, stringToWrite.indexOf("\n"));
+			String filename = "";
+			if (Character.isLetter(stringToWrite.charAt(0))) {
+				String firstname = stringToWrite.substring(stringToWrite.indexOf("\n")+1);
+				filename = firstname.substring(0, firstname.indexOf("\n"));
+			}
 			for (int i=0; i<4; i++) {
 				stringToWrite = stringToWrite.substring(stringToWrite.indexOf('\n')+1);
 			} try {

@@ -9,9 +9,15 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import javax.swing.JOptionPane;
+
 public class CSE110Summer {
 	public static void main(String[] args) throws IOException {
 		File input = new File(Directories.getPathToHTMLFile());
+		if (!input.isFile() && !input.isDirectory()) {
+			JOptionPane.showMessageDialog(null, "You must have a file called \"CSE110.html\" in the same directory as the JAR file.");
+			return;
+		}
 		ExtractHTML.extractHTMLFromFile(input);
 		/* num times */
 		final int ASSIGNMENT_NUM_TIMES = 8, LAB_NUM_TIMES = 20, EXAM_NUM_TIMES = 4, QUIZ_NUM_TIMES = 15;
@@ -38,10 +44,10 @@ public class CSE110Summer {
 		String finalOutput = "";
 		try {
 			int j = 0;
-			numToRemove.add(3); // assignments 
-			numToRemove.add(15);// labs
-			numToRemove.add(2); // exams
-			numToRemove.add(9); // quizzes
+			numToRemove.add(ASSIGNMENT_INDEX, 2); // assignments 
+			numToRemove.add(LAB_INDEX, 13);// labs
+			numToRemove.add(EXAM_INDEX, 1); // exams
+			numToRemove.add(QUIZ_INDEX, 8); // quizzes
 			for (File f : dir.listFiles()) {
 					double total = 0.0;
 					inputGrades(grades.get(ASSIGNMENT_INDEX), ASSIGNMENT_NUM_TIMES, j, ASSIGNMENT_STARTING_INDEX);
@@ -55,10 +61,12 @@ public class CSE110Summer {
 						averages.add(average(a));
 						i++;
 					}
-					total += ASSIGNMENT_PERCENTAGE*averages.get(ASSIGNMENT_INDEX)/(ASSIGNMENT_TOTAL);
-					total += LAB_PERCENTAGE*averages.get(LAB_INDEX)/LAB_TOTAL;
-					total += EXAM_PERCENTAGE*averages.get(EXAM_INDEX)/EXAM_TOTAL;
-					total += QUIZ_PERCENTAGE*averages.get(QUIZ_INDEX)/QUIZ_TOTAL;
+
+					double totalAssignments = ASSIGNMENT_PERCENTAGE*averages.get(ASSIGNMENT_INDEX)/(ASSIGNMENT_TOTAL);
+					double totalLabs = LAB_PERCENTAGE*averages.get(LAB_INDEX)/LAB_TOTAL;
+					double totalExams = EXAM_PERCENTAGE*averages.get(EXAM_INDEX)/EXAM_TOTAL;
+					double totalQuizzes = QUIZ_PERCENTAGE*averages.get(QUIZ_INDEX)/QUIZ_TOTAL;
+					total = totalAssignments + totalExams + totalLabs + totalQuizzes;
 					String grade = evaluateGrade(total);
 					String filename = f.getName().replace(".txt", "");
 					DecimalFormat format = new DecimalFormat("0.000");
@@ -84,7 +92,6 @@ public class CSE110Summer {
 	}
 	
 	public static void removeFromArray(ArrayList<Double> array, int num) {
-		Collections.sort(array);
 		if (array.size() > num) {
 			for (int i=0; i<num; i++) {
 				array.remove(0);
